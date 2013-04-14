@@ -1,0 +1,146 @@
+.article {
+    font-size: 1.2em;
+    font-weight: bold;
+    line-height: 1.2;
+    text-align: left
+    }
+.articledate {
+    color: gray;
+    font-family: monospace
+    }
+.articledescription {
+    display: block;
+    font-size: 0.7em;
+    text-indent: 0
+    }
+.calibre {
+    display: block;
+    font-size: 1em;
+    line-height: 1.2;
+    margin-bottom: 0;
+    margin-left: 5pt;
+    margin-right: 5pt;
+    margin-top: 0;
+    padding-left: 0;
+    padding-right: 0
+    }
+.calibre1 {
+    display: block;
+    margin-bottom: 1em;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 1em;
+    text-align: center
+    }
+.calibre10 {
+    font-weight: bold
+    }
+.calibre11 {
+    display: block;
+    margin-bottom: 1em;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 1em;
+    max-width: 100%;
+    overflow: hidden;
+    text-align: left
+    }
+.calibre12 {
+    font-style: italic
+    }
+.calibre2 {
+    height: auto;
+    width: auto
+    }
+.calibre3 {
+    display: block;
+    margin-bottom: 1em;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 1em;
+    text-align: right
+    }
+.calibre4 {
+    display: list-item
+    }
+.calibre5 {
+    border: 1px inset;
+    color: gray;
+    display: block;
+    height: 2px;
+    margin-bottom: 0.5em;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 0.5em
+    }
+.calibre6 {
+    display: block
+    }
+.calibre7 {
+    display: block;
+    margin-bottom: 1em;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 1em
+    }
+.calibre8 {
+    display: block;
+    font-size: 1.375em;
+    font-weight: bold;
+    line-height: 1.2;
+    margin-bottom: 0.83em;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0.83em
+    }
+.calibre9 {
+    display: block;
+    list-style-type: decimal;
+    margin-bottom: 1em;
+    margin-right: 0;
+    margin-top: 1em
+    }
+.calibrefeeddescription {
+    display: block;
+    font-size: 0.8em;
+    line-height: 1.2
+    }
+.calibrefeedlist {
+    display: block;
+    list-style-type: disc;
+    margin-bottom: 1em;
+    margin-right: 0;
+    margin-top: 1em
+    }
+.calibrefeedtitle {
+    display: block;
+    font-size: 1.6em;
+    font-weight: bold;
+    line-height: 1.2;
+    margin-bottom: 0.83em;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0.83em
+    }
+.calibrenavbar {
+    display: block;
+    font-family: monospace;
+    font-size: 0.7em;
+    text-align: center
+    }
+.calibrerescale {
+    display: block;
+    font-size: 1em;
+    line-height: 1.2
+    }
+.calibrerescale1 {
+    display: list-item;
+    font-size: 1em;
+    line-height: 1.2;
+    padding-bottom: 0.5em
+    }
+.feed {
+    font-size: 1.2em;
+    font-weight: bold;
+    line-height: 1.2
+    }

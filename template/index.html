@@ -1,0 +1,27 @@
+## -*- coding: utf-8 -*-
+<% from xml.sax.saxutils import escape as escapexml %>
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>${escapexml(magazine.name)}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" type="text/css" rel="stylesheet"/>
+<link href="page_styles.css" type="text/css" rel="stylesheet"/>
+</head>
+  <body class="calibre">
+    <div class="calibrerescale">
+      <p class="calibre1">
+        <img src="mastheadImage.jpg" alt="masthead" class="calibre2"/>
+      </p>
+      <p class="calibre3">${escapexml(magazine.description)}</p>
+      <ul class="calibrefeedlist">
+      % for s in magazine.sections:
+     <li id="${s.id}" class="calibre4">
+          <a href="${s.location}" class="feed">${escapexml(s.name)}</a>
+      </li>
+      % endfor
+        
+      </ul>
+    </div>
+  </body>
+</html>

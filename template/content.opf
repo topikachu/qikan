@@ -1,0 +1,47 @@
+## -*- coding: utf-8 -*-
+<% from xml.sax.saxutils import escape as escapexml %>
+<?xml version='1.0' encoding='utf-8'?>
+<package xmlns="http://www.idpf.org/2007/opf" version="2.0" unique-identifier="uuid_id">
+  <metadata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:opf="http://www.idpf.org/2007/opf" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:calibre="http://calibre.kovidgoyal.net/2009/metadata" xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <dc:publisher>calibre</dc:publisher>
+    <dc:description>${escapexml(magazine.description)}</dc:description>
+    <dc:language>zh</dc:language>
+    <dc:creator opf:file-as="calibre" opf:role="aut">calibre</dc:creator>
+    <meta name="calibre:timestamp" content="${magazine.creationTime}"/>
+    <dc:title>${escapexml(magazine.name)}</dc:title>
+    <meta name="cover" content="cover"/>
+    <dc:date>${magazine.creationTime}</dc:date>
+    <dc:contributor opf:role="bkp">topikachu</dc:contributor>
+    <dc:identifier id="uuid_id" opf:scheme="uuid">${magazine.uuid}</dc:identifier>
+    <meta name="calibre:publication_type" content="periodical:unknown:${escapexml(magazine.name)}"/>
+  </metadata>
+  <manifest>
+    <item href="cover.jpg" id="cover" media-type="image/jpeg"/>
+    % for section in magazine.sections:
+    <item href="${section.location}" id="${section.id}" media-type="application/xhtml+xml"/>
+        % for article in section.articles:
+    <item href="${article.location}" id="${article.id}" media-type="application/xhtml+xml"/>
+        % endfor
+    % endfor
+    <item href="index.html" id="index" media-type="application/xhtml+xml"/>
+    <item href="mastheadImage.jpg" id="masthead-image" media-type="image/jpeg"/>
+    <item href="page_styles.css" id="page_css" media-type="text/css"/>
+    <item href="stylesheet.css" id="css" media-type="text/css"/>
+    <item href="titlepage.xhtml" id="titlepage" media-type="application/xhtml+xml"/>
+    <item href="toc.ncx" media-type="application/x-dtbncx+xml" id="ncx"/>
+  </manifest>
+  <spine toc="ncx">
+    <itemref idref="titlepage"/>
+    <itemref idref="index"/>
+    % for section in magazine.sections:
+    <itemref idref="${section.id}"/>
+        % for article in section.articles:
+    <itemref idref="${article.id}"/>
+        % endfor
+    % endfor
+  </spine>
+  <guide>
+    <reference href="mastheadImage.jpg" type="other.masthead" title="Masthead Image"/>
+    <reference href="titlepage.xhtml" type="cover" title="Cover"/>
+  </guide>
+</package>

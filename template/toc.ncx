@@ -1,0 +1,36 @@
+## -*- coding: utf-8 -*-
+<% from xml.sax.saxutils import escape as escapexml %>
+<?xml version='1.0' encoding='utf-8'?>
+<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1" xml:lang="zho">
+  <head>
+    <meta content="$(magazine.uuid)" name="dtb:uid"/>
+    <meta content="3" name="dtb:depth"/>
+    <meta content="topikachu" name="dtb:generator"/>
+    <meta content="0" name="dtb:totalPageCount"/>
+    <meta content="0" name="dtb:maxPageNumber"/>
+  </head>
+  <docTitle>
+    <text>${escapexml(magazine.name)}</text>
+  </docTitle>
+  <navMap>
+  <% idx=1 %>
+  % for section in magazine.sections:
+    <navPoint class="chapter" id="${section.id}" playOrder="${idx}">
+      <navLabel>
+        <text>${escapexml(section.name)}</text>
+      </navLabel>
+      <content src="${section.location}"/>
+    <% idx=idx+1 %>
+        % for article in section.articles:
+        <navPoint class="chapter" id="${article.id}" playOrder="${idx}">
+          <navLabel>
+            <text>${escapexml(article.name)}</text>
+          </navLabel>
+          <content src="${article.location}"/>          
+        </navPoint>
+        <% idx=idx+1 %>
+        % endfor
+    </navPoint>
+  % endfor
+  </navMap>
+</ncx>

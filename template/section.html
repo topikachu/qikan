@@ -1,0 +1,32 @@
+## -*- coding: utf-8 -*-
+<% from xml.sax.saxutils import escape as escapexml %>
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>${escapexml(section.name)}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" type="text/css" rel="stylesheet"/>
+<link href="page_styles.css" type="text/css" rel="stylesheet"/>
+</head>
+  <body class="calibre">
+
+## <div class="calibrenavbar">| <a href="../index_u4.html">主菜单</a> | <a href="../feed_0/index.html">上一节</a> |<hr class="calibre5"/>
+</div>
+<div class="calibrerescale">
+<h2 class="calibrefeedtitle">${escapexml(section.name)}</h2>
+## <div class="calibrefeeddescription">${escapexml(section.description)}<br class="calibre6"/>
+</div>
+<ul class="calibrefeedlist">
+% for article in section.articles:
+    <li class="calibrerescale1">
+        <a href="${article.location}" class="article">${escapexml(article.name)}</a>
+    </li>
+% endfor
+    
+</ul>
+<div class="calibrenavbar">
+## <hr class="calibre5"/>| <a href="../index_u4.html">主菜单</a> | <a href="../feed_0/index.html">上一节</a> |</div>
+</div>
+
+
+</body></html>
