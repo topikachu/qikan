@@ -21,6 +21,9 @@
     <item href="${section.location}" id="${section.id}" media-type="application/xhtml+xml"/>
         % for article in section.articles:
     <item href="${article.location}" id="${article.id}" media-type="application/xhtml+xml"/>
+            % if article.imgLocation:
+    <item href="${article.imgLocation}" id="${article.imgId}" media-type="image/jpeg"/>
+            % endif
         % endfor
     % endfor
     <item href="index.html" id="index" media-type="application/xhtml+xml"/>

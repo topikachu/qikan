@@ -22,6 +22,14 @@ class Saver():
         f=codecs.open(os.path.join(self.magazine.destFolder(),filename),'w','utf-8')
         f.write(content)
         f.close()
+    def saveImage(self,url,filename):
+        req=urllib2.Request(url)
+        req.add_header("Referer",self.magazine.url)
+        r=urllib2.urlopen(req)
+        f=open(os.path.join(self.magazine.destFolder(),filename),"wb")
+        f.write(r.read())
+        f.close()
+        logger.debug('save %s to %s' % (url,filename))
 
 
 class Magazine(Saver):
@@ -45,34 +53,29 @@ class Magazine(Saver):
                 s.name="Section" 
             s.location="section%d.html" % idx
             s.id="id%d" % idx
+            s.idx=idx
             idx=idx+1
             for a in s.articles:
                 a.location="article%d.html" % idx
                 a.id="id%d" % idx
+                a.idx=idx
+                
                 idx=idx+1
         dest=self.destFolder()
         if (os.path.isdir(dest)):
             shutil.rmtree(dest, ignore_errors=True)
         shutil.copytree('template',dest)
         logger.debug("prepare target folder %s" % dest)
-    def saveEpubMetadata(self):        
-        self.saveUTF8('content.opf',Magazine.opfT.render_unicode(magazine=self))                
-        self.saveUTF8('toc.ncx',Magazine.tocT.render_unicode(magazine=self))
-        logger.debug('save epub metadata')
-
-    def saveIndex(self):
-        self.saveUTF8('index.html',Magazine.indexT.render_unicode(magazine=self))
-
+   
     def getEpubPath(self):
         return self.destFolder()+'.epub'
     def genEpub(self):
-        if (self.cover):            
-            req=urllib2.Request(self.cover)
-            req.add_header("Referer",self.url)
-            r=urllib2.urlopen(req)
-            f=open(os.path.join(self.destFolder(),"cover.jpg"),"wb")
-            f.write(r.read())
-            f.close()            
+        self.saveUTF8('content.opf',Magazine.opfT.render_unicode(magazine=self))                
+        self.saveUTF8('toc.ncx',Magazine.tocT.render_unicode(magazine=self))
+        self.saveUTF8('index.html',Magazine.indexT.render_unicode(magazine=self))
+        logger.debug('save epub metadata')
+        if (self.cover):
+            self.saveImage(self.cover,"cover.jpg")                        
         zip = zipfile.ZipFile(self.getEpubPath(), 'w')    
         for root, dirs, files in os.walk(self.destFolder()):
             for f in files:
@@ -98,8 +101,15 @@ class Article(Saver):
         self.urls=[]
         self.section=section
         self.magazien=magazine
+        self.imgUrl=''
+        self.imgLocation=''
         Saver.__init__(self,magazine)
     def save(self):        
+        if (self.imgUrl):
+            self.imgLocation="img%d.jpg" % self.idx
+            self.imgId="img%d" % self.idx
+            self.saveImage(self.imgUrl, self.imgLocation)
+            logger.debug("download img OK")
         self.saveUTF8(self.location,Article.articleT.render_unicode(article=self),)
         logger.debug('save article %s' % self.name)
 
@@ -128,18 +138,13 @@ class QiKanDownloader():
         detail=browser.find_by_css('a.all_v1')
         if (len(detail)):
             logger.debug('has detail')
-            return self.downloadDetail()
+            return self.downloadDetail(detail.first['href'])
         else:
             logger.debug('no detail')
-    def downloadDetail(self):        
+    def downloadDetail(self,detailUrl):        
         logger.debug('detail download start')
         browser=self.browser
-        detail=browser.find_by_css('a.all_v1')
-        if (len(detail)==0):
-            logger.debug("no detail page")
-            return
         magazine=Magazine()
-        detailUrl=detail.first['href']
         logger.debug('go to detail page')
         magazine.url=detailUrl
         browser.visit(detailUrl)
@@ -153,38 +158,36 @@ class QiKanDownloader():
             logger.debug('mag cover is %s' % magazine.cover)
 
         articleElements=browser.find_by_css('div.magDetails_con_l>*')
-        
         articles=[]
         for e in articleElements:            
             if e.tag_name.lower()=='h1':
+                if not e.text.strip():
+                    continue
                 section=Section(magazine)
                 section.name=e.text
                 magazine.sections.append(section)
                 logger.debug('found section %s' % section.name)
-            else:
+            else:                
+                article=Article(section,magazine)
+                nameEle=e.find_by_xpath('dt/a')
+                if (not len(nameEle)):
+                    continue
+                article.name=e.find_by_xpath('dt/a').first.text
+                article.url=e.find_by_xpath('dt/a').first['href']
                 if ('section' not in vars()):
                     section=Section(magazine)
                     magazine.sections.append(section)
-                article=Article(section,magazine)
-                article.name=e.find_by_xpath('dt/a').first.text
-                article.url=e.find_by_xpath('dt/a').first['href']
                 section.articles.append(article)
                 logger.debug('found article %s at %s' % (article.name,article.url))
-                articles.append(article)
-
-        
-        magazine.preSave()
-        magazine.saveEpubMetadata()
-        magazine.saveIndex()
+                articles.append(article)        
+        magazine.preSave() 
         for s in magazine.sections:
-            s.save()
-            
-        
+            s.save()        
         for a in articles:            
             logger.debug('download %s start ' % a.name) 
             self.downloadSingleArticle(a)
             logger.debug('download %s finish' % a.name)
-        magazine.genEpub() 
+        magazine.genEpub()
         return magazine
         
 
@@ -230,7 +233,7 @@ def main():
     magazines=['http://www.qikan.com.cn/MastMagazineArchive/1672-8335.html','http://www.qikan.com.cn/MastMagazineArchive/1673-2456.html']
     downloader = QiKanDownloader()
     try:
-        downloader.login(),
+        #downloader.login(),
         for m in magazines:
             downloader.download(m)
         print "done"

@@ -1,5 +1,5 @@
 *.pyc
 *.log
 *.exe
-main.py
+config.py
 workspace
