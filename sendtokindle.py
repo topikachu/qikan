@@ -14,7 +14,7 @@ def send(ebook,sender,to,smtp,username,password):
     outer['To'] = to
     outer['From'] = sender
     outer.preamble = 'You will not see this in a MIME-aware mail reader.\n'
-    ctype = 'application/octet-stream'
+    ctype = 'application/x-mobipocket-ebook'
     maintype, subtype = ctype.split('/', 1)
     fp = open(ebook, 'rb')
     msg = MIMEBase(maintype, subtype)
