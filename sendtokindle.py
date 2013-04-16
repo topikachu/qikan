@@ -21,7 +21,7 @@ def send(ebook,sender,to,smtp,username,password):
     msg.set_payload(fp.read())
     fp.close()
     encoders.encode_base64(msg)
-    msg.add_header('Content-Disposition', 'attachment', filename=('utf-8', '', os.path.basename(ebook).encode('utf-8') ))
+    msg.add_header('Content-Disposition', 'attachment', filename='ebook.mobi')
     outer.attach(msg)
     composed = outer.as_string()
     logger.debug('send %s to kindle',ebook)

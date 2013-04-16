@@ -101,21 +101,25 @@ class Article(Saver):
         self.urls=[]
         self.section=section
         self.magazien=magazine
-        self.imgUrl=''
-        self.imgLocation=''
+        self.imgUrls=[]
+        self.images=[]        
         Saver.__init__(self,magazine)
-    def save(self):        
-        if (self.imgUrl):
-            self.imgLocation="img%d.jpg" % self.idx
-            self.imgId="img%d" % self.idx
-            self.saveImage(self.imgUrl, self.imgLocation)
+    def save(self):
+        idx=0
+        for imgUrl in self.imgUrls:
+            imgLocation="img%d-%d.jpg" % (self.idx,idx)
+            imgId="img%d-%d" % (self.idx,idx)
+            self.saveImage(imgUrl, imgLocation)
+            self.images.append((imgLocation,imgId))            
             logger.debug("download img OK")
+            idx=idx+1
         self.saveUTF8(self.location,Article.articleT.render_unicode(article=self),)
         logger.debug('save article %s' % self.name)
 
 class QiKanDownloader():
     def __init__ (self):
-        self.browser=Browser(profile='C:/Users/pikachu/AppData/Roaming/Mozilla/Firefox/Profiles/odfwln6i.default')
+        #self.browser=Browser(profile='C:/Users/pikachu/AppData/Roaming/Mozilla/Firefox/Profiles/odfwln6i.default')
+        self.browser=Browser()
         #self.browser=Browser(driver_name='phantomjs',load_images=False,wait_time=10)
         #self.browser=Browser(driver_name='chrome')
         #self.browser=Browser(driver_name='zope.testbrowser')
@@ -201,23 +205,41 @@ class QiKanDownloader():
         logger.debug('open ok')
         imageElement=browser.find_by_css('div.articlePicBox img')
         if (len(imageElement)):
-            article.imgUrl=browser.find_by_css('div.articlePicBox img').first['src']
-            logger.debug('find article image at %s' % article.imgUrl)
+            self.findArticleAllImages(article)
+           
         else:
             article.imgUrl=''
-        browser.find_by_css('#the_content').first.text
-        article.content=self.getArticleContent()
-        pagesElement=browser.find_by_css('div.pulic_page li')
-        if (len(pagesElement)):
-            logger.debug('find pagenation')
-            urls=[e.find_by_css('a').first['href'] for e in pagesElement[2:-3] ]
-            for url in urls:
-                logger.debug('go to %s' % url)
-                browser.visit(url)                
-                article.content=article.content+self.getArticleContent()
+        article.content=''
+        if browser.is_element_present_by_css('#the_content',10):
+            browser.find_by_css('#the_content').first.text
+            article.content=self.getArticleContent()
+            pagesElement=browser.find_by_css('div.pulic_page li')
+            if (len(pagesElement)):
+                logger.debug('find pagenation')
+                urls=[e.find_by_css('a').first['href'] for e in pagesElement[2:-3] ]
+                for url in urls:
+                    logger.debug('go to %s' % url)
+                    browser.visit(url)                
+                    article.content=article.content+self.getArticleContent()
         article.save()
         
 
+    def findArticleAllImages(self,article):
+        browser=self.browser
+        browser.find_by_css('div.articlePicBox img').first.click()
+        while (True):
+            if browser.is_element_present_by_css('img#lightboxImage',10):
+                imgUrl=browser.find_by_css('img#lightboxImage').first['src']
+                article.imgUrls.append(imgUrl)
+                logger.debug('find article image at %s' % imgUrl)
+                import time
+                time.sleep(5)
+                if (browser.is_element_present_by_css('a#nextLinkBottom',10) and browser.find_by_css('a#nextLinkBottom').first.visible):
+                    browser.find_by_css('a#nextLinkBottom').first.click()
+                else:
+                    break
+            else:
+                break
     def getArticleContent(self):
         browser=self.browser
         seleniumElement=browser.find_by_css('#the_content').first._element
@@ -233,7 +255,7 @@ def main():
     magazines=['http://www.qikan.com.cn/MastMagazineArchive/1672-8335.html','http://www.qikan.com.cn/MastMagazineArchive/1673-2456.html']
     downloader = QiKanDownloader()
     try:
-        #downloader.login(),
+        downloader.login(),
         for m in magazines:
             downloader.download(m)
         print "done"

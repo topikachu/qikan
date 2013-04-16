@@ -20,13 +20,13 @@ def main():
     downloader = QiKanDownloader()
     try:
         downloader.login(config.qikanUsername,config.qikanPassword)
-        m = 'http://www.qikan.com.cn/MagDetails/1008-5017/2013/12.html'        
-        magazine=downloader.downloadDetail(m)
-        if (magazine):
-            mobifile=mobi.convert(magazine.getEpubPath())
-            if (mobifile):
-                sendtokindle.send(mobifile,config.mailSender,config.mailTo,config.mailSmtpServer,config.mailUsername,config.mailPassword)   
-                print "done"
+        for m in ['http://www.qikan.com.cn/MagDetails/0257-0238/2013/8.html']:
+            magazine=downloader.downloadDetail(m)
+            if (magazine):
+                mobifile=mobi.convert(magazine.getEpubPath())
+                if (mobifile):
+                    sendtokindle.send(mobifile,config.mailSender,config.mailTo,config.mailSmtpServer,config.mailUsername,config.mailPassword)   
+                    print "done"
 
                 
 

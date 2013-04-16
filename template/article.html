@@ -10,9 +10,9 @@
 </head>
 <body>
     <h1>${article.name}</h1>
-    % if article.imgUrl:
-    <img src="${article.imgLocation}"/>
-    % endif
+    % for image in article.images:
+    <img src="${image[0]}"/>
+    % endfor
 ${article.content}
 </body>
 </html>
