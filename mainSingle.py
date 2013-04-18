@@ -16,11 +16,10 @@ import sys, traceback
 #mailPassword
 def main():
     logging.getLogger('qikan').setLevel(logging.DEBUG)
-    magazines=config.magazines
     downloader = QiKanDownloader()
     try:
         downloader.login(config.qikanUsername,config.qikanPassword)
-        for m in ['http://www.qikan.com.cn/MagDetails/0257-0238/2013/8.html']:
+        for m in ['http://www.qikan.com.cn/MagDetails/1671-2145/2013/1.html']:
             magazine=downloader.downloadDetail(m)
             if (magazine):
                 mobifile=mobi.convert(magazine.getEpubPath())

@@ -10,7 +10,7 @@ import codecs
 import shutil
 import zipfile
 import urllib2
-
+import pinyin
 logging.basicConfig()
 logger=logging.getLogger('qikan.Dowloader')
 
@@ -43,7 +43,7 @@ class Magazine(Saver):
         self.uuid=str(uuid.uuid1())
 
     def destFolder(self):
-        return os.path.join('workspace',self.name+self.description)
+        return os.path.join('workspace',pinyin.get(self.name+self.description))
 
     def preSave(self):
         idx=1
